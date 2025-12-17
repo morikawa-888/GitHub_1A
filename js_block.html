@@ -16,40 +16,72 @@
     </style>
 </head>
 <body>
-    <canvas id="myCanvas" width="480" height="320"></canvas>
+  <canvas id="myCanvas" width="480" height="320"></canvas>
 
-    <script>
-    const canvas = document.getElementById("myCanvas");
-    //document(このファイル)からidが"myCanvas"になっている要素(Element)を取得
-    const ctx = canvas.getContext("2d");
-    //canvasから2d描画用のコンテキスト(描画等の設定が詰まったもの)を取得
+  <script>
+  const canvas = document.getElementById("myCanvas");
+  //document(このファイル)からidが"myCanvas"になっている要素(Element)を取得
+  const ctx = canvas.getContext("2d");
+  //canvasから2d描画用のコンテキスト(描画等の設定が詰まったもの)を取得
 
-    //図形を描画するプログラム(beginPath()とclosePath()で囲む)
+  let x = canvas.width/2;
+  let y = canvas.height-30;
+  let dx = 2;
+  let dy = -2;
+  const ballRadius = 10;
+
+  const paddleHeight = 10;
+  const paddleWidth = 75;
+  let paddleX = (canvas,wight - paddleWidth) / 2;
+
+  let rightPressed = false;
+  let leftPressed = false;
+
+  document.addEventListener("keydown" , keyDownHandler , false);
+  document.addEventListener("keyup", keyUpHandler, false);
+
+  function keyDownHandler(e)
+  {
+
+  }
+  function keyUpHandler(e)
+  {
+
+  }
+
+  function drawBall() {
     ctx.beginPath();
-    ctx.rect(20, 40, 50, 50);
-    //rect(左側のx座標(px), 上側のy座標(px),横幅(px),縦幅(px))
-    //短形・四角形(rectangle)を描画する関数
-    ctx.fillStyle = "#FF0000";  //RRGGBB
-    //塗りつぶしの色を設定
+    ctx.arc(x, y, ballRadius, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#0095DD";
     ctx.fill();
-    //図形の塗りつぶしを実行
     ctx.closePath();
+}
 
+  function drawPaddle() {
     ctx.beginPath();
-    ctx.arc(240, 160, 20, 0, Math.PI * 2, false);
-    //円弧(arc)を描画する(中心x座標、中心y座標、半径、開始角度、終了角度、時計回り)
-    //プログラムで角度を扱う場合は、Degree(360)ではなく、Radian(2*PI)を使うことが多い
-    ctx.fillStyle = "green";
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+}
 
-    ctx.beginPath();
-    ctx.rect(160, 10, 100, 40);
-    ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
-    //線描画の色を設定(*半透明(Alpha)の指定がある)
-    ctx.stroke();
-    //図形の輪郭を描画
-    ctx.closePath();
-    </script>
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall(); //関数の呼び出し・実行
+
+    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+    }
+    if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+        dy = -dy;
+    }
+    x += dx;
+    y += dy;
+}
+
+setInterval(draw, 10);
+
+  </script>
+
 </body>
 </html>
