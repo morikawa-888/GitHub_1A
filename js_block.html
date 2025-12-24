@@ -16,46 +16,53 @@
     </style>
 </head>
 <body>
-  <canvas id="myCanvas" width="480" height="320"></canvas>
 
-  <script>
+<canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
   const canvas = document.getElementById("myCanvas");
   //document(このファイル)からidが"myCanvas"になっている要素(Element)を取得
   const ctx = canvas.getContext("2d");
   //canvasから2d描画用のコンテキスト(描画等の設定が詰まったもの)を取得
-
+  const ballRadius = 10;
   let x = canvas.width/2;
   let y = canvas.height-30;
   let dx = 2;
   let dy = -2;
-  const ballRadius = 10;
-
   const paddleHeight = 10;
   const paddleWidth = 75;
-  let paddleX = (canvas,wight - paddleWidth) / 2;
-
+  let paddleX = (canvas.wight - paddleWidth) / 2;
   let rightPressed = false;
   let leftPressed = false;
 
-  document.addEventListener("keydown" , keyDownHandler , false);
+  document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
 
-  function keyDownHandler(e)
-  {
-
+  function keyDownHandler(e) { //押されたキーの種類を調べる(矢印キーの右)
+    if (e.key === "Right" || e.key === "ArrowRight") {
+      rightPressed = true;
+    }
+    else if (e.key === "Left" || e.key === "AllowLeft") {
+      leftPressed = true;
+    }
   }
-  function keyUpHandler(e)
-  {
 
+  function keyUpHandler(e) { //押されたキーの種類を調べる(矢印キーの左)
+    if (e.key === "Right" || e.key === "ArrowRight") {
+      rightPressed = false;
+    }
+    else if (e.key === "Left" || e.key === "ArrowLeft") {
+      leftPressed = false;
+    }
   }
 
   function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 10, 0, Math.PI * 2);
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
-}
+  }
 
   function drawPaddle() {
     ctx.beginPath();
@@ -63,25 +70,46 @@
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
-}
+  }
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall(); //関数の呼び出し・実行
+    drawPaddle();
 
-    if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+    if (x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
-    if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
-        dy = -dy;
+    if (y + dy < ballRadius) {
+      dy = -dy;
     }
+    else if (y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+      // 画面左端でのゲームオーバー
+      if (x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy;
+      }
+      else {
+        alert("GAME OVER");
+        // 現在のページをリロード(再読み込み)
+        document.location.reload();
+        // setIntervalでの設定をリセットする
+        clearInterval(interval);
+      }
+    }
+
+    if (rightPressed && paddleX < canvas.width - paddleWidth) { // 矢印キーの右が押されている間
+      paddleX += 7;
+    }
+    else if (leftPressed && paddleX > 0) { // 矢印キーの左が押されている間
+      paddleX -= 7;
+    }
+
     x += dx;
     y += dy;
-}
+  }
 
-setInterval(draw, 10);
-
-  </script>
+  const interval = setInterval(draw, 10);
+</script>
 
 </body>
 </html>
